@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
+#include <algorithm>
 #include "Classes/Base/GameObject.h"
 
 auto handlePaddleBounce = [](GameObject& ball, GameObject& paddle, bool isLeftPaddle) //lambda for calculating ball bounce off paddles
