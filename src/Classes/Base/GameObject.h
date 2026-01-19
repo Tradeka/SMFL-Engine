@@ -7,6 +7,7 @@ using namespace sf;
 // NOTE: GameObject is a base class for all objects in the game that have a visual representation and can move.//
 // It encapsulates a sprite and provides functionality for rendering, collision detection, and movement.       //
 // All of my functions for this engine will use a capitalized first letter, SFML native functions use camelCase//
+// Gameobject can be instantiated directly, but can also be inherited from for more specific object types      //
 //-------------------------------------------------------------------------------------------------------------//
 
 class GameObject : public sf::Drawable, public sf::Transformable

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
-#include "Classes/GameObject.h"
+#include "Classes/Base/GameObject.h"
 
 auto handlePaddleBounce = [](GameObject& ball, GameObject& paddle, bool isLeftPaddle) //lambda for calculating ball bounce off paddles
     {
@@ -43,7 +43,8 @@ int main()
 	Texture ballTexture("Assets/Textures/ball.png");
     Texture paddle1Texture("Assets/Textures/paddle.png");
     Texture paddle2Texture("Assets/Textures/paddle.png");
-
+	Texture gateTexture("Assets/Textures/gate.png");
+    
 
     //Ball
     GameObject ball(ballTexture);
@@ -53,14 +54,16 @@ int main()
 	//Set initial ball velocity with some randomness
 	float random = distrib_float(gen);
 
+	float baseBallSpeed = 5.f;
+
     if(random < 0.25f)
-        ball.SetVelocity({ -3.5f, -3.5f });
+        ball.SetVelocity({ -baseBallSpeed, -baseBallSpeed });
     else if(random < 0.5f)
-        ball.SetVelocity({ -3.5f, 3.5f });
+        ball.SetVelocity({ -baseBallSpeed, baseBallSpeed });
     else if(random < 0.75f)
-        ball.SetVelocity({ 3.5f, -3.5f });
+        ball.SetVelocity({ baseBallSpeed, -baseBallSpeed });
 	else
-		ball.SetVelocity({ 3.5f, 3.5f });
+		ball.SetVelocity({ baseBallSpeed, baseBallSpeed });
 
 
     //Player 1
@@ -68,9 +71,43 @@ int main()
     paddle1.scale({ 1.f, 1.8f });
     paddle1.setPosition({ (float)paddle1.GetGlobalBounds().size.x / 2, (float)window.getSize().y / 2 });
 
+	int player1Score = 0;
+
+    //Player 2
 	GameObject paddle2(paddle2Texture);
 	paddle2.scale({ 1.f, 1.8f });
 	paddle2.setPosition({ (float)(window.getSize().x - paddle2.GetGlobalBounds().size.x / 2), (float)window.getSize().y / 2 });
+
+	int player2Score = 0;
+
+    //Gate 
+	GameObject gate(gateTexture);
+	gate.setPosition({ (float)(window.getSize().x / 2 - gate.GetGlobalBounds().size.x / 2), (float)(window.getSize().y / 2 - gate.GetGlobalBounds().size.y / 2 - 25) });
+	gate.scale({ 0.75f, 1.f });
+
+	GameObject gate2(gateTexture);
+	gate2.setPosition({ (float)(window.getSize().x / 2 - gate2.GetGlobalBounds().size.x / 2), (float)(window.getSize().y / 2 - 25) });
+    gate2.setScale({ 0.75f, 1.f });
+
+	GameObject gate3(gateTexture);
+	gate3.setPosition({ (float)(window.getSize().x / 2 - gate3.GetGlobalBounds().size.x / 2), (float)(window.getSize().y - gate3.GetGlobalBounds().size.y / 3 - 25) });
+	gate3.scale({ 0.75f, 1.f });
+
+    //Score Text
+    Font gameFont;
+    if (!gameFont.openFromFile("Assets/Fonts/ByteBounce.ttf"))
+    {
+        std::cerr << "Failed to load font: Assets/Fonts/ByteBounce.ttf" << std::endl;
+        return -1;
+    }
+
+	Text player1ScoreText(gameFont);
+	Text player2ScoreText(gameFont);
+
+	player1ScoreText.setPosition({ (float)window.getSize().x / 4.f, 50.f });
+	player2ScoreText.setPosition({ (float)(window.getSize().x / 4.f * 3.f), 50.f });
+	player1ScoreText.setCharacterSize(100);
+	player2ScoreText.setCharacterSize(100);
 
     while (window.isOpen())
     {
@@ -120,17 +157,20 @@ int main()
         }
         else if (ball.getPosition().x > window.getSize().x - ball.GetGlobalBounds().size.x / 2)
         {
-			//Will Add Score Here Later
+            player1Score++;
             ball.setPosition({ 960.f, 540.f });
             ball.SetVelocity({ -3.5f, 3.5f });
         }
         else if (ball.getPosition().x < 0 + ball.GetGlobalBounds().size.x / 2)
 		{
-            //Will Add Score Here Later
+            player2Score++;
             ball.setPosition({ 960.f, 540.f });
 			ball.SetVelocity({ 3.5f, 3.5f });
         }
 
+		//Update Score Text
+		player1ScoreText.setString(std::to_string(player1Score));
+		player2ScoreText.setString(std::to_string(player2Score));
 
 		//Wall Collision(paddle1) - We can just use clamp here because the paddle doesn't bounce off walls
         auto pos = paddle1.getPosition();
@@ -163,9 +203,14 @@ int main()
 
 		//Draw Objects
         window.clear();
+		window.draw(gate);
+        window.draw(gate2);
+        window.draw(gate3);
         window.draw(ball);
         window.draw(paddle1);
 		window.draw(paddle2);
+		window.draw(player1ScoreText);
+		window.draw(player2ScoreText);
         window.display();
     }
 
