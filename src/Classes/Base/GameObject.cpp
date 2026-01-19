@@ -1,5 +1,5 @@
 #include "SFML/Graphics.hpp"
-#include "GameObject.h"
+#include "Classes/Base/GameObject.h"
 
 //Constructor/Destructor
 GameObject::GameObject(const Texture& texture)

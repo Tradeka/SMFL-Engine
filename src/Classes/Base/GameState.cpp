@@ -1,4 +1,4 @@
-#include "GameState.h"
+#include "Classes/Base/GameState.h"
 
 void GameState::DrawObjects(RenderWindow& window)
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "GameObject.h"
+#include "Classes/Base/GameObject.h"
 
 //----------------------------------------------------------------------//
 //Abstract base class for different game states                         //
