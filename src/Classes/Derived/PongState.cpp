@@ -79,21 +79,21 @@ void PongState::HandleInput(RenderWindow& window)
     //Paddle 1 controls (W/S)
     if (Keyboard::isKeyPressed(Keyboard::Key::W))
     {
-        paddle1.SetVelocity({ 0.f, -3.5f });
+        paddle1.SetVelocity({ 0.f, -4.f });
     }
     else if (Keyboard::isKeyPressed(Keyboard::Key::S))
     {
-        paddle1.SetVelocity({ 0.f, 3.5f });
+        paddle1.SetVelocity({ 0.f, 4.f });
     }
 
     //Paddle 2 controls (Up/Down)
     if (Keyboard::isKeyPressed(Keyboard::Key::Up))
     {
-        paddle2.SetVelocity({ 0.f, -3.5f });
+        paddle2.SetVelocity({ 0.f, -4.f });
     }
     else if (Keyboard::isKeyPressed(Keyboard::Key::Down))
     {
-        paddle2.SetVelocity({ 0.f, 3.5f });
+        paddle2.SetVelocity({ 0.f, 4.f });
     }
 }
 

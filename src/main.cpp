@@ -1,7 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <random>
-#include <algorithm>
 #include "Classes/Derived/PongState.h"
 #include "Classes/Base/StateManager.h"
 
