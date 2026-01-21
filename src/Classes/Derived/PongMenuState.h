@@ -5,7 +5,7 @@
 class PongMenuState : public GameState
 {
 public:
-	PongMenuState();
+	PongMenuState(StateManager& mgr);
 	~PongMenuState() = default;
 
 	//Overrides
@@ -19,17 +19,16 @@ public:
 	void StartGame();
 	void QuitGame(RenderWindow& window);
 
-	//Setter
-	void SetStateManager(StateManager mgr);
-
 
 private:
+	//Font
+	Font gameFont;
 	//Title and buttons
 	std::unique_ptr<Text> titleText;
 	std::unique_ptr<Text> buttonTexts[2];
 
 	//State manager reference for transitioning to game state
-	StateManager stateManager;
+	StateManager* stateManager;
 
 	//int to keep track of which button is selected
 	int selectedButtonIndex;

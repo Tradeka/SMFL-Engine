@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Classes/Derived/PongState.h"
+#include "Classes/Derived/PongMenuState.h"
 #include "Classes/Base/StateManager.h"
 
 
@@ -11,8 +12,10 @@ int main()
     //Initialize State manager
     StateManager stateManager;
 
-    //Add a Pong State to the state manager
-    stateManager.PushState(std::make_unique<PongState>());
+    auto menuState = std::make_unique<PongMenuState>(stateManager);
+
+    //Add a PongMenuState to the state manager
+    stateManager.PushState(std::move(menuState));
 
 
     while (window.isOpen())

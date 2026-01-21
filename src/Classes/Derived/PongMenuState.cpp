@@ -1,26 +1,39 @@
 #include "Classes/Derived/PongMenuState.h"
 #include "Classes/Derived/PongState.h"
+#include <iostream>
 
 
 //Constructor
-PongMenuState::PongMenuState()
+PongMenuState::PongMenuState(StateManager& mgr)
 {
+	//Initialize statemanager ref
+	stateManager = &mgr;
+
+	//Load font
+	if (!gameFont.openFromFile("Assets/Fonts/ByteBounce.ttf"))
+	{
+		std::cerr << "Failed to load font: Assets/Fonts/ByteBounce.ttf" << std::endl;
+	}
+
 	//Set up text objects
-	titleText = std::make_unique<Text>();
+	titleText = std::make_unique<Text>(gameFont);
+	titleText->setFont(gameFont);
 	titleText->setString("Pong");
 	titleText->setCharacterSize(250);
-	titleText->setPosition({540.f - (titleText->getCharacterSize() * 4), 250.f});
+	titleText->setPosition({730.f, 250.f});
 
-	buttonTexts[0] = std::make_unique<Text>();
+	buttonTexts[0] = std::make_unique<Text>(gameFont);
+	buttonTexts[0]->setFont(gameFont);
 	buttonTexts[0]->setString("Play Game");
 	buttonTexts[0]->setCharacterSize(100);
-	buttonTexts[0]->setPosition({ 540.f - (buttonTexts[0]->getCharacterSize() * 9), 500.f});
+	buttonTexts[0]->setPosition({ 755.f, 500.f});
 	buttonTexts[0]->setFillColor(Color::Yellow); //Set this one to yellow on initialization because this is the default selected button
 
-	buttonTexts[1] = std::make_unique<Text>();
+	buttonTexts[1] = std::make_unique<Text>(gameFont);
+	buttonTexts[1]->setFont(gameFont);
 	buttonTexts[1]->setString("Quit");
 	buttonTexts[1]->setCharacterSize(100);
-	buttonTexts[1]->setPosition({ 540.f - (buttonTexts[1]->getCharacterSize() * 4), 530.f });
+	buttonTexts[1]->setPosition({ 865.f, 580.f });
 
 	//Initialize selected index
 	selectedButtonIndex = 0;
@@ -35,22 +48,26 @@ void PongMenuState::HandleInput(RenderWindow& window)
 		{
 			window.close();
 		}
-	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::W) || Keyboard::isKeyPressed(Keyboard::Key::Up))
-	{
-		selectedButtonIndex--;
-		SwitchSelectedButton();
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::Key::S) || Keyboard::isKeyPressed(Keyboard::Key::Down))
-	{
-		selectedButtonIndex++;
-		SwitchSelectedButton();
-	}
+		if (event->is<Event::KeyPressed>())
+		{
+			const auto& keyEvent = event->getIf<Event::KeyPressed>();
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::Enter))
-	{
-		SelectedButtonPressed(window);
+			if (keyEvent->code == Keyboard::Key::W || keyEvent->code == Keyboard::Key::Up)
+			{
+				selectedButtonIndex = (selectedButtonIndex - 1 + 2) % 2; // Wrap around
+				SwitchSelectedButton();
+			}
+			else if (keyEvent->code == Keyboard::Key::S || keyEvent->code == Keyboard::Key::Down)
+			{
+				selectedButtonIndex = (selectedButtonIndex + 1) % 2; // Wrap around
+				SwitchSelectedButton();
+			}
+			else if (keyEvent->code == Keyboard::Key::Enter)
+			{
+				SelectedButtonPressed(window);
+			}
+		}
 	}
 }
 
@@ -61,9 +78,11 @@ void PongMenuState::Update()
 
 void PongMenuState::Render(RenderWindow& window)
 {
+	window.clear();
 	window.draw(*titleText);
 	window.draw(*buttonTexts[0]);
 	window.draw(*buttonTexts[1]);
+	window.display();
 }
 
 //Utility
@@ -97,16 +116,10 @@ void PongMenuState::SelectedButtonPressed(RenderWindow& window)
 
 void PongMenuState::StartGame()
 {
-	stateManager.PushState(std::make_unique<PongState>());
+	stateManager->PushState(std::make_unique<PongState>());
 }
 
 void PongMenuState::QuitGame(RenderWindow& window)
 {
 	window.close();
-}
-
-//Setter
-void PongMenuState::SetStateManager(StateManager mgr)
-{
-	stateManager = mgr;
 }
