@@ -16,7 +16,11 @@ PongState::PongState()
     player2Score(0),
     baseBallSpeed(5.f),
     gen(rd()),
-    distrib_float(0.f, 1.f)
+    distrib_float(0.f, 1.f),
+    paddleHitBuffer("Assets/Sounds/paddleBounce.wav"),
+    paddleHitSound(paddleHitBuffer),
+	scoreSoundBuffer("Assets/Sounds/scoreSound.wav"),
+	scoreSound(scoreSoundBuffer)
 {
     //Ball setup
     ball.setPosition({ 960.f, 540.f });
@@ -67,6 +71,8 @@ PongState::PongState()
     gameMusic.setLooping(true);
     gameMusic.play();
     
+	paddleHitSound.setBuffer(paddleHitBuffer);
+	scoreSound.setBuffer(scoreSoundBuffer);
 
     //Set initial ball velocity
     ResetBall();
@@ -138,6 +144,9 @@ void PongState::Render(RenderWindow& window) //Render the objects
 
 void PongState::HandlePaddleBounce(GameObject& ball, GameObject& paddle, bool isLeftPaddle) //Function to handle the velocity of the ball bouncing off the paddle
 {
+	//Play sound
+	paddleHitSound.play();
+
     float paddleHeight = paddle.GetGlobalBounds().size.y;
     float paddleHalfWidth = paddle.GetGlobalBounds().size.x / 2.f;
     float ballHalfWidth = ball.GetGlobalBounds().size.x / 2.f;
@@ -181,11 +190,17 @@ void PongState::CheckCollisions(const Vector2u& windowSize) //Function for handl
     //Ball-wall collision (left/right) - scoring
     if (ball.getPosition().x > windowSize.x - ball.GetGlobalBounds().size.x / 2.f)
     {
+        //Play score sound
+		scoreSound.play();
+
         player1Score++;
         ResetBall();
     }
     else if (ball.getPosition().x < 0 + ball.GetGlobalBounds().size.x / 2.f)
     {
+		//Play score sound
+		scoreSound.play();
+
         player2Score++;
         ResetBall();
     }

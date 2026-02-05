@@ -4,6 +4,8 @@
 #include <random>
 #include <memory>
 #include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 using namespace sf;
 
@@ -53,4 +55,10 @@ private:
 
     //Music/Sounds
 	sf::Music gameMusic;
+
+    sf::SoundBuffer paddleHitBuffer;
+    sf::Sound paddleHitSound;
+
+	sf::SoundBuffer scoreSoundBuffer;
+	sf::Sound scoreSound;
 };
