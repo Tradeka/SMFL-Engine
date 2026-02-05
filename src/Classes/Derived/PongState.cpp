@@ -58,6 +58,16 @@ PongState::PongState()
     player1ScoreText->setString("0");
     player2ScoreText->setString("0");
 
+    
+    if (!gameMusic.openFromFile("Assets/Sounds/retroArcadeMusic.mp3"))
+    {
+        std::cerr << "Failed to load music\n";
+    }
+
+    gameMusic.setLooping(true);
+    gameMusic.play();
+    
+
     //Set initial ball velocity
     ResetBall();
 }

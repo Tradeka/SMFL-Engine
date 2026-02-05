@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(main src/main.cpp "src/Classes/Base/GameObject.cpp" "src/Classes/Derived/PongState.cpp" "src/Classes/Base/StateManager.h" "src/Classes/Base/StateManager.cpp" "src/Classes/Derived/PongMenuState.h" "src/Classes/Derived/PongMenuState.cpp")
 target_compile_features(main PRIVATE cxx_std_17)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE SFML::Graphics SFML::Audio)
 target_include_directories(main PRIVATE src)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)

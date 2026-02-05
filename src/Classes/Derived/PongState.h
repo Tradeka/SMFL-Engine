@@ -3,6 +3,7 @@
 #include "Classes/Base/GameObject.h"
 #include <random>
 #include <memory>
+#include <SFML/Audio/Music.hpp>
 
 using namespace sf;
 
@@ -49,4 +50,7 @@ private:
     std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<> distrib_float;
+
+    //Music/Sounds
+	sf::Music gameMusic;
 };
