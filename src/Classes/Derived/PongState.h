@@ -1,6 +1,7 @@
 #pragma once
 #include "Classes/Base/GameState.h"
 #include "Classes/Base/GameObject.h"
+#include "Classes/Base/Animation.h"
 #include <random>
 #include <memory>
 #include <SFML/Audio/Music.hpp>

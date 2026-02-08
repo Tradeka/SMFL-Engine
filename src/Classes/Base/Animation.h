@@ -8,18 +8,29 @@ using namespace sf;
 //There will be an animation state machine to control which animation is playing for a GameObject //
 //------------------------------------------------------------------------------------------------//
 
-class Animation
+class Animation : public sf::Drawable
 {
 public:
 
-	explicit Animation(const Texture& spriteSheet, Vector2i spriteSize);
+	explicit Animation(const Texture& spriteSheet, Vector2i spriteSize, unsigned int frameCount);
+
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override; //override draw function from sf::Drawable
 
 	//Utility
-	void Play(bool looping, float framerate);
+	void Play();
+
+	void SetLooping(bool isLooping);
+
+	void SetFrameDuration(float duration);
 
 private:
 	IntRect currentFrame;
 	Texture sheet;
 	Sprite displayedSprite;
 	Clock clock;
+	unsigned int frameCount;
+	unsigned int currentFrameIndex;
+	Vector2i spriteSize;
+	bool looping;
+	float frameDuration;
 };
