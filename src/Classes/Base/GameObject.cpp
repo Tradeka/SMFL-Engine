@@ -13,6 +13,11 @@ GameObject::GameObject(const Texture& texture)
 //Utility
 void GameObject::draw(RenderTarget& target, RenderStates states) const
 {
+    if (animator)
+    {
+		animator->PlayCurrent();
+		
+    }
     states.transform *= getTransform();
     target.draw(sprite, states);
 }
@@ -48,5 +53,10 @@ void GameObject::SetVelocity(const Vector2f& vel)
 Vector2f& GameObject::GetVelocity()
 {
     return velocity;
+}
+
+void GameObject::SetAnimator(Animator* anim)
+{
+    animator = anim;
 }
 

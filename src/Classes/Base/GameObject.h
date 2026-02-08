@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Classes/Base/Animator.h"
 
 using namespace sf;
 
@@ -17,9 +18,9 @@ public:
 	explicit GameObject(const Texture& texture);
 	~GameObject() = default;
 
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override; //override draw function from sf::Drawable
+	void draw(RenderTarget& target, RenderStates states) const override; //override draw function from sf::Drawable
 
-	sf::FloatRect GetGlobalBounds() const;
+	FloatRect GetGlobalBounds() const;
 
 	bool Intersects(const GameObject& other) const;
 
@@ -30,9 +31,13 @@ public:
 	void SetVelocity(const Vector2f& vel);
 	Vector2f& GetVelocity();
 
+	void SetAnimator(Animator* anim);
+
 private:
 	Sprite sprite;
 
 	Vector2f velocity{ 0.f, 0.f };
+
+	Animator* animator = nullptr; //pointer to an animator, if the GameObject has one. This is used for animation state machines in derived classes
 };
 

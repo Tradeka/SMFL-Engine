@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include "Classes/Derived/PongState.h"
-#include "Classes/Derived/PongMenuState.h"
+#include "Classes/Derived/States/PongState.h"
+#include "Classes/Derived/States/PongMenuState.h"
 #include "Classes/Base/StateManager.h"
 
 

@@ -23,6 +23,8 @@ public:
 
 	void SetFrameDuration(float duration);
 
+	Sprite& GetSprite();
+
 private:
 	IntRect currentFrame;
 	Texture sheet;

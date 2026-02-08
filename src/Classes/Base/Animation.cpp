@@ -51,3 +51,8 @@ void Animation::draw(RenderTarget& target, RenderStates states) const
 	target.draw(displayedSprite, states);
 }
 
+Sprite& Animation::GetSprite()
+{
+    return displayedSprite;
+}
+
