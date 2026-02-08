@@ -10,6 +10,6 @@ public:
 	void PlayCurrent();
 	void SwitchCurrent(String animName);
 private:
-	std::unordered_map<String, Animation> animations;
+	//std::unordered_map<String, Animation> animations;
 	Animation* current = nullptr;
 };
