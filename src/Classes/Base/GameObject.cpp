@@ -16,7 +16,9 @@ void GameObject::draw(RenderTarget& target, RenderStates states) const
     if (animator)
     {
 		animator->PlayCurrent();
-		
+        states.transform *= getTransform();
+        target.draw(animator->GetCurrentSprite(), states);
+        return;
     }
     states.transform *= getTransform();
     target.draw(sprite, states);

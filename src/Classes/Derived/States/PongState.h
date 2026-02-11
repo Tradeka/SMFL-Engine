@@ -1,7 +1,7 @@
 #pragma once
 #include "Classes/Base/GameState.h"
 #include "Classes/Base/GameObject.h"
-#include "Classes/Base/Animation.h"
+#include "Classes/Base/Animator.h"
 #include <random>
 #include <memory>
 #include <SFML/Audio/Music.hpp>
@@ -38,6 +38,11 @@ private:
     GameObject gate;
     GameObject gate2;
     GameObject gate3;
+
+    //Animated object testing
+    Animator anim;
+	GameObject animatedObject;
+	Texture walkAnimTexture;
 
     //Game state
     int player1Score;

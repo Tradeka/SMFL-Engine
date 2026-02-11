@@ -19,3 +19,8 @@ void Animator::SwitchCurrent(std::string animName)
 {
 	current = &animations.find(animName)->second;
 }
+
+Sprite& Animator::GetCurrentSprite()
+{
+	return current->GetSprite();
+}

@@ -6,7 +6,7 @@ PongState::PongState()
     : ballTexture("Assets/Textures/ball.png"),
     paddleTexture("Assets/Textures/paddle.png"),
     gateTexture("Assets/Textures/gate.png"),
-    ball(ballTexture),           
+    ball(ballTexture),
     paddle1(paddleTexture),
     paddle2(paddleTexture),
     gate(gateTexture),
@@ -19,8 +19,9 @@ PongState::PongState()
     distrib_float(0.f, 1.f),
     paddleHitBuffer("Assets/Sounds/paddleBounceMono.wav"),
     paddleHitSound(paddleHitBuffer),
-	scoreSoundBuffer("Assets/Sounds/scoreSound.wav"),
-	scoreSound(scoreSoundBuffer)
+    scoreSoundBuffer("Assets/Sounds/scoreSound.wav"),
+    scoreSound(scoreSoundBuffer),
+	animatedObject(ballTexture) //Give the animated object a texture, even if it won't be used, to avoid errors
 {
     //Ball setup
     ball.setPosition({ 960.f, 540.f });
@@ -62,7 +63,7 @@ PongState::PongState()
     player1ScoreText->setString("0");
     player2ScoreText->setString("0");
 
-    
+
     if (!gameMusic.openFromFile("Assets/Sounds/retroArcadeMusic.mp3"))
     {
         std::cerr << "Failed to load music\n";
@@ -72,14 +73,28 @@ PongState::PongState()
     gameMusic.setVolume(50.f);
     gameMusic.setDirection({ -1,0,0 });
     gameMusic.play();
-    
-	paddleHitSound.setBuffer(paddleHitBuffer);
-	scoreSound.setBuffer(scoreSoundBuffer);
+
+    paddleHitSound.setBuffer(paddleHitBuffer);
+    scoreSound.setBuffer(scoreSoundBuffer);
 
     paddleHitSound.setAttenuation(50);
 
     //Set initial ball velocity
     ResetBall();
+
+    //Setup animated object
+	if (walkAnimTexture.loadFromFile("Assets/Textures/walkAnim.png"))  //1. Load the sprite sheet texture
+    {
+		auto walkAnim = std::make_shared<Animation>(walkAnimTexture, Vector2i{ 32,32 }, 6); //2. Create an animation with the texture, specifying frame size and count
+		walkAnim->SetLooping(true); //3. Set the animation to loop (optional)
+		anim.AddAnimation(*walkAnim, "walk"); //4. Add the animation to the animator with a name
+        anim.SwitchCurrent("walk"); //5. Set the animation to current if you want it to be the default state
+    }
+	animatedObject.SetAnimator(&anim); //6. Give the animated object a pointer to its animator
+    
+    //Now Animations should work. You can add others and switch the current animation based on game state as needed.
+
+	animatedObject.setPosition({ 500.f, 500.f });
 }
 
 void PongState::HandleInput(RenderWindow& window)
@@ -143,6 +158,7 @@ void PongState::Render(RenderWindow& window) //Render the objects
     window.draw(paddle2);
     window.draw(*player1ScoreText);
     window.draw(*player2ScoreText);
+	window.draw(animatedObject);
     window.display();
 }
 
