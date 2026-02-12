@@ -7,7 +7,7 @@ Animation::Animation(const Texture& spriteSheet, Vector2i spriteSize, unsigned i
 	this->spriteSize = spriteSize;
 
     looping = false;
-    frameDuration = 0.0167f;
+    frameDuration = 0.167f;
 
 	currentFrame = IntRect({ 0,0 }, {spriteSize.x, spriteSize.y});
 	currentFrameIndex = 0;

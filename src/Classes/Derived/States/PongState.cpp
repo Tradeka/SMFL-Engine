@@ -83,7 +83,7 @@ PongState::PongState()
     ResetBall();
 
     //Setup animated object
-	if (walkAnimTexture.loadFromFile("Assets/Textures/walkAnim.png"))  //1. Load the sprite sheet texture
+	if (walkAnimTexture.loadFromFile("Assets/SpriteSheets/walk.png"))  //1. Load the sprite sheet texture
     {
 		auto walkAnim = std::make_shared<Animation>(walkAnimTexture, Vector2i{ 32,32 }, 6); //2. Create an animation with the texture, specifying frame size and count
 		walkAnim->SetLooping(true); //3. Set the animation to loop (optional)
@@ -95,6 +95,7 @@ PongState::PongState()
     //Now Animations should work. You can add others and switch the current animation based on game state as needed.
 
 	animatedObject.setPosition({ 500.f, 500.f });
+    animatedObject.setScale({3.5f,3.5f});
 }
 
 void PongState::HandleInput(RenderWindow& window)

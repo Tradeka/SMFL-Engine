@@ -13,16 +13,21 @@ GameObject::GameObject(const Texture& texture)
 //Utility
 void GameObject::draw(RenderTarget& target, RenderStates states) const
 {
+    states.transform *= getTransform();
+
     if (animator)
     {
-		animator->PlayCurrent();
-        states.transform *= getTransform();
-        target.draw(animator->GetCurrentSprite(), states);
+        if (Sprite* sprite = animator->GetCurrentSprite())
+        {
+            target.draw(*sprite, states);
+			animator->PlayCurrent(); //May want to remove this from the draw function later if you want more control over when animations update, but for now this is fine since all animations will update every frame regardless
+        }
         return;
     }
-    states.transform *= getTransform();
+
     target.draw(sprite, states);
 }
+
 
 FloatRect GameObject::GetGlobalBounds() const //VERY IMPORTANT: This is necessary to get the transformed bounds of the sprite for accurate collision detection
 {                                             //otherwise, only the untransformed local bounds would be returned and that causes janky collisions

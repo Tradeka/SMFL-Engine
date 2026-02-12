@@ -15,8 +15,9 @@ public:
 	void AddAnimation(Animation anim, std::string name);
 	void PlayCurrent();
 	void SwitchCurrent(std::string animName);
-	Sprite& GetCurrentSprite();
+	Sprite* GetCurrentSprite();
+	Animation* GetCurrent();
 private:
 	std::unordered_map<std::string, Animation> animations;
-	Animation* current = nullptr;
+	std::string currentName;
 };

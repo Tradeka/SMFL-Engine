@@ -12,15 +12,33 @@ void Animator::AddAnimation(Animation anim, std::string name)
 
 void Animator::PlayCurrent()
 {
-	current->Play();
+	if (!GetCurrent())
+		return;
+
+	GetCurrent()->Play();
 }
 
 void Animator::SwitchCurrent(std::string animName)
 {
-	current = &animations.find(animName)->second;
+	auto it = animations.find(animName);
+	if (it != animations.end())
+	{
+		currentName = animName;
+	}
 }
 
-Sprite& Animator::GetCurrentSprite()
+Sprite* Animator::GetCurrentSprite()
 {
-	return current->GetSprite();
+	Animation* anim = GetCurrent();
+	return anim ? &anim->GetSprite() : nullptr;
+}
+
+Animation* Animator::GetCurrent()
+{
+	auto it = animations.find(currentName);
+	if (it != animations.end())
+	{
+		return &it->second;
+	}
+	return nullptr;
 }
