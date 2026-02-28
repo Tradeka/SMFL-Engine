@@ -39,11 +39,6 @@ private:
     GameObject gate2;
     GameObject gate3;
 
-    //Animated object testing
-    Animator anim;
-	GameObject animatedObject;
-	Texture walkAnimTexture;
-
     //Game state
     int player1Score;
     int player2Score;

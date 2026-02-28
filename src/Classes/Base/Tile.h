@@ -7,16 +7,15 @@ using namespace sf;
 // Tile class, contains sprite to be drawn, and tile size for collision detection //
 //--------------------------------------------------------------------------------//
 
-class Tile : public Drawable
+class Tile : public Drawable, public Transformable
 {
 public:
+    Tile(const sf::IntRect& textureRect, const sf::Texture& texture);
 
-	Tile(const Vector2f& position, const Vector2f& size, const Texture& texture);
+    const sf::Sprite& GetSprite() const;
 
-	void draw(RenderTarget& target, RenderStates states) const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
-	Sprite sprite;
-	Vector2i tileSize;
-
+    sf::Sprite sprite;
 };

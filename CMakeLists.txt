@@ -12,7 +12,7 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp "src/Classes/Base/GameObject.cpp" "src/Classes/Derived/States/PongState.cpp" "src/Classes/Base/StateManager.h" "src/Classes/Base/StateManager.cpp" "src/Classes/Derived/States/PongMenuState.h" "src/Classes/Derived/States/PongMenuState.cpp" "src/Classes/Base/Animation.h" "src/Classes/Base/Animation.cpp" "src/Classes/Base/Animator.h" "src/Classes/Base/Animator.cpp" "src/Classes/Base/Tile.h")
+add_executable(main src/main.cpp "src/Classes/Base/GameObject.cpp" "src/Classes/Derived/States/PongState.cpp" "src/Classes/Base/StateManager.h" "src/Classes/Base/StateManager.cpp" "src/Classes/Derived/States/PongMenuState.h" "src/Classes/Derived/States/PongMenuState.cpp" "src/Classes/Base/Animation.h" "src/Classes/Base/Animation.cpp" "src/Classes/Base/Animator.h" "src/Classes/Base/Animator.cpp" "src/Classes/Base/Tile.h" "src/Classes/Base/Tilemap.h" "src/Classes/Base/Tilemap.cpp" "src/Classes/Base/Tile.cpp" "src/Classes/Derived/States/PlatformerState.h" "src/Classes/Derived/States/PlatformerState.cpp")
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Audio)
 target_include_directories(main PRIVATE src)

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Classes/Derived/States/PongState.h"
 #include "Classes/Derived/States/PongMenuState.h"
+#include "Classes/Derived/States/PlatformerState.h"
 #include "Classes/Base/StateManager.h"
 
 
@@ -12,11 +13,15 @@ int main()
     //Initialize State manager
     StateManager stateManager;
 
-    auto menuState = std::make_unique<PongMenuState>(stateManager);
+    /*GAMES*/
 
-    //Add a PongMenuState to the state manager
-    stateManager.PushState(std::move(menuState));
+    //PONG
+    //auto menuState = std::make_unique<PongMenuState>(stateManager);
+    //stateManager.PushState(std::move(menuState));
 
+	//PLATFORMER
+	auto platformerState = std::make_unique<PlatformerState>();
+	stateManager.PushState(std::move(platformerState));
 
     while (window.isOpen())
     {
