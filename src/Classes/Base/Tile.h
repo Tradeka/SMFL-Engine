@@ -16,6 +16,10 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+	void SetCollidable(bool collidable) { isCollidable = collidable; }
+	bool IsCollidable() const { return isCollidable; }
+
 private:
     sf::Sprite sprite;
+    bool isCollidable; 
 };
