@@ -7,11 +7,15 @@
 class PlatformerState : public GameState
 {
 public:
+
 	PlatformerState();
 	~PlatformerState() override = default;
 	void HandleInput(RenderWindow& window) override;
 	void Update() override;
 	void Render(RenderWindow& window) override;
+
+	//Game Specific Utility
+	void ApplyGravity(GameObject& obj, float gravity);
 
 private:
 
@@ -25,6 +29,12 @@ private:
 	//Tilemap
 	Texture tilemapSheet;
 	Tilemap tilemap;
+
+	//Other
+	bool playerGrounded = false; //Variable to track if the player is on the ground, allowing them to jump again after jumping
+
+	//Camera
+	View camera;
 	
 
 };

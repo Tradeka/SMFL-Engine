@@ -24,6 +24,10 @@ public:
 
 	bool Intersects(const GameObject& other) const;
 
+	void DrawDebugBounds(RenderTarget& target) const;
+
+	void SyncSpriteTransform(Sprite& sprite) const; //Utility function to sync the transform of the sprite with the transform of the GameObject, used for animators
+
 	//Setters/Getters
 	void SetSprite(const Texture& texture);
 	Sprite& GetSprite();

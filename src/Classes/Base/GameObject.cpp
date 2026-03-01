@@ -13,30 +13,57 @@ GameObject::GameObject(const Texture& texture)
 //Utility
 void GameObject::draw(RenderTarget& target, RenderStates states) const
 {
-    states.transform *= getTransform();
-
     if (animator)
     {
         if (Sprite* sprite = animator->GetCurrentSprite())
         {
-            target.draw(*sprite, states);
-			animator->PlayCurrent(); //May want to remove this from the draw function later if you want more control over when animations update, but for now this is fine since all animations will update every frame regardless
+			SyncSpriteTransform(*sprite); //Sync the sprite transform with GameObject transform before drawing
+            target.draw(*sprite);
+            animator->PlayCurrent();
         }
         return;
     }
-
-    target.draw(sprite, states);
+    target.draw(sprite);
 }
 
 
-FloatRect GameObject::GetGlobalBounds() const //VERY IMPORTANT: This is necessary to get the transformed bounds of the sprite for accurate collision detection
-{                                             //otherwise, only the untransformed local bounds would be returned and that causes janky collisions
-    return getTransform().transformRect(sprite.getGlobalBounds());
+sf::FloatRect GameObject::GetGlobalBounds() const
+{
+    if (animator)
+    {
+        if (sf::Sprite* animSprite = animator->GetCurrentSprite())
+        {
+            return animSprite->getGlobalBounds();
+        }
+    }
+
+    return sprite.getGlobalBounds();
 }
 
 bool GameObject::Intersects(const GameObject& other) const //Clean AABB collision detection using SFML's built-in function
 {
     return (bool)GetGlobalBounds().findIntersection(other.GetGlobalBounds());
+}
+
+void GameObject::DrawDebugBounds(sf::RenderTarget& target) const
+{
+    sf::FloatRect bounds = GetGlobalBounds();
+
+    sf::RectangleShape rect;
+    rect.setPosition(bounds.position);
+    rect.setSize(bounds.size);
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineColor(sf::Color::Green);
+    rect.setOutlineThickness(2.f);
+
+    target.draw(rect);
+}
+
+void GameObject::SyncSpriteTransform(Sprite& sprite) const
+{
+    sprite.setPosition(getPosition());
+    sprite.setScale(getScale());
+    sprite.setRotation(getRotation());
 }
 
 //Setters/Getters

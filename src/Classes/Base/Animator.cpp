@@ -1,4 +1,5 @@
 #include "Classes/Base/Animator.h"
+#include <iostream>
 
 Animator::Animator()
 {

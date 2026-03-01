@@ -26,22 +26,21 @@ Tilemap::Tilemap(const Texture& spriteSheet, Vector2i tileS, Vector2i mapS) : ti
 
 void Tilemap::draw(RenderTarget& target, RenderStates states) const
 {
-	states.transform *= getTransform(); // Apply the transform of the tilemap
+    states.transform *= getTransform();
+
+    // draw tiles
     for (size_t y = 0; y < designVector.size(); y++)
     {
         for (size_t x = 0; x < designVector[y].size(); x++)
         {
             int tileID = designVector[y][x];
-
             auto it = idMap.find(tileID);
             if (it == idMap.end())
                 continue;
 
-            // Copy the sprite so we can move it
-            Sprite sprite = it->second.GetSprite(); // or expose sprite access
+            sf::Sprite sprite = it->second.GetSprite();
             sprite.setPosition(
-                { static_cast<float>(x * tileSize.x),
-                static_cast<float>(y * tileSize.y) }
+                {(float) x * tileSize.x, (float) y * tileSize.y }
             );
 
             target.draw(sprite, states);
@@ -52,4 +51,59 @@ void Tilemap::draw(RenderTarget& target, RenderStates states) const
 void Tilemap::SetDesignVector(const std::vector<std::vector<int>>& design)
 {
 	designVector = design;
+}
+
+void Tilemap::SetCollisionVector(const std::vector<std::vector<int>>& collision)
+{
+    collisionVector = collision;
+
+    collisionRects.clear();
+    collisionRects.resize(mapSize.y, std::vector<FloatRect>(mapSize.x));
+
+    for (int y = 0; y < mapSize.y; y++)
+    {
+        for (int x = 0; x < mapSize.x; x++)
+        {
+            collisionRects[y][x] = FloatRect(
+                { (float)x * (float)tileSize.x,
+                (float)y * (float)tileSize.y },
+                { (float)tileSize.x,
+                (float)tileSize.y }
+            );
+        }
+    }
+}
+
+bool Tilemap::CheckTileMapCollision(GameObject& obj)
+{
+    sf::FloatRect objBounds = obj.GetGlobalBounds();
+
+    sf::Vector2f mapPos = getPosition();
+    sf::Vector2f mapScale = getScale();
+
+    for (int y = 0; y < mapSize.y; y++)
+    {
+        for (int x = 0; x < mapSize.x; x++)
+        {
+            if (collisionVector[y][x] != 1)
+                continue;
+
+            sf::Vector2f tilePos(
+                mapPos.x + x * tileSize.x * mapScale.x,
+                mapPos.y + y * tileSize.y * mapScale.y
+            );
+
+            sf::Vector2f tileSizeScaled(
+                tileSize.x * mapScale.x,
+                tileSize.y * mapScale.y
+            );
+
+            sf::FloatRect tileRect(tilePos, tileSizeScaled);
+
+            if (tileRect.findIntersection(objBounds))
+                return true;
+        }
+    }
+
+    return false;
 }
