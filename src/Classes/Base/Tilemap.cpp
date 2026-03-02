@@ -12,7 +12,7 @@ Tilemap::Tilemap(const Texture& spriteSheet, Vector2i tileS, Vector2i mapS) : ti
     {
         for (int x = 0; x < tilesX; x++)
         {
-            sf::IntRect rect(
+            IntRect rect(
                 { x * tileSize.x,
                 y * tileSize.y },
                 { tileSize.x,

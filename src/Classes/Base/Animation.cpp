@@ -33,6 +33,9 @@ void Animation::Play()
 
         displayedSprite.setTextureRect(currentFrame);
         clock.restart();
+
+        if(!looping)
+			currentFrameIndex = 0; //Reset to first frame after playing once if not looping
     }
 }
 

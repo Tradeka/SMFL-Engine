@@ -17,6 +17,7 @@ public:
 	void SwitchCurrent(std::string animName);
 	Sprite* GetCurrentSprite();
 	Animation* GetCurrent();
+	std::string GetCurrentAnimationName() const { return currentName; }
 private:
 	std::unordered_map<std::string, Animation> animations;
 	std::string currentName;

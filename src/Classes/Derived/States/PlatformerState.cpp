@@ -9,7 +9,6 @@ PlatformerState::PlatformerState() :
 {
 	if(tilemapSheet.loadFromFile("Assets/SpriteSheets/world_tileset.png"))
 	{
-		//Initialize tilemap design vector
 		std::vector<std::vector<int>> design = {
 			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
 			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
@@ -75,7 +74,6 @@ PlatformerState::PlatformerState() :
 	tilemap.setScale({ 6.f, 6.f });
 
 	camera.setSize({ 1920.f, 1080.f });
-	camera.setCenter(player.getPosition());
 }
 
 void PlatformerState::HandleInput(RenderWindow& window)
@@ -104,10 +102,11 @@ void PlatformerState::HandleInput(RenderWindow& window)
 		if(playerGrounded)
 			playerAnim.SwitchCurrent("walk"); //Switch to walk animation
 	}
-	else
+	else if (!Keyboard::isKeyPressed(Keyboard::Key::A) && !Keyboard::isKeyPressed(Keyboard::Key::D) && !Keyboard::isKeyPressed(Keyboard::Key::Space))
 	{
-		player.SetVelocity({ 0.f, player.GetVelocity().y }); //Stop horizontal movement if no input
-		playerAnim.SwitchCurrent("idle"); //Switch to idle animation if not moving horizontally
+		player.SetVelocity({ 0.f, player.GetVelocity().y }); //Stop horizontal movement when no left/right input
+		if (playerGrounded)
+			playerAnim.SwitchCurrent("idle"); //Switch to idle animation when not moving left or right
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && playerGrounded)
@@ -146,7 +145,6 @@ void PlatformerState::Update()
 	{
 		playerGrounded = false; //Set grounded to false if not colliding with tilemap
 	}
-
 
 	camera.setCenter(player.getPosition()); //Set camera to follow player
 	player.move(player.GetVelocity()); //Move player based on velocity
