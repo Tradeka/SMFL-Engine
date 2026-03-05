@@ -5,39 +5,40 @@ PlatformerState::PlatformerState() :
 	playerIdle("Assets/SpriteSheets/player_idle.png"),
 	player(playerIdle),
 	tilemapSheet("Assets/SpriteSheets/world_tileset.png"),
-	tilemap(tilemapSheet, Vector2i(16, 16), Vector2i(20, 12))
+	tilemap(tilemapSheet, Vector2i(16, 16), Vector2i(40, 12))
 {
 	if(tilemapSheet.loadFromFile("Assets/SpriteSheets/world_tileset.png"))
 	{
 		std::vector<std::vector<int>> design = {
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176,   0,   0,   0, 176, 176, 176, 176},
-			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
-			{   0,   0,   0,   0,   0,   0,   0, 176, 176,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
-			{  16,  16,  16,  16,  16,  16,  16, 176, 176,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16},
-			{  16,  16,  16,  16,  16,  16,  16, 176, 176,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16},
-			{  16,  16,  16,  16,  16,  16,  16, 176, 176,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16}
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176,   0,   0,   0, 176, 176,   0,   0,   0, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{ 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176},
+			{   0,   0,   0,   0,   0,   0,   0, 176, 176, 176, 176, 176, 176, 176,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+			{  16,  16,  16,  16,  16,  16,  16, 150, 150, 150, 150, 150, 150, 150,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16},
+			{  16,  16,  16,  16,  16,  16,  16, 166, 166, 166, 166, 166, 166, 166,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16},
+			{  16,  16,  16,  16,  16,  16,  16, 166, 166, 166, 166, 166, 166, 166,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16},
+			{  16,  16,  16,  16,  16,  16,  16, 166, 166, 166, 166, 166, 166, 166,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16,  16}
 		};
 		tilemap.SetDesignVector(design);
 
 		std::vector<std::vector<int>> collision = {
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 		};
 		tilemap.SetCollisionVector(collision);
 	}
@@ -68,6 +69,13 @@ PlatformerState::PlatformerState() :
 		playerAnim.AddAnimation(*jumpAnim, "jump");
 	}
 
+	if(playerRun.loadFromFile("Assets/SpriteSheets/player_run.png"))
+	{
+		auto runAnim = std::make_shared<Animation>(playerRun, Vector2i{ 32,32 }, 6);
+		runAnim->SetLooping(true);
+		playerAnim.AddAnimation(*runAnim, "run");
+	}
+
 	player.setPosition({ 100.f, 100.f });
 	player.setScale({ 3.f, 3.f });
 
@@ -89,18 +97,46 @@ void PlatformerState::HandleInput(RenderWindow& window)
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
 		player.setScale({ -3.f, 3.f }); //Flip sprite when moving left
-		player.SetVelocity({ -2.f, player.GetVelocity().y }); //Move left
 
-		if (playerGrounded) //Only switch to walk animation if player is on the ground, prevents walking animation from playing in the air
-			playerAnim.SwitchCurrent("walk"); //Switch to walk animation
+		if (playerGrounded)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::Key::LShift))
+			{
+				player.SetVelocity({ -5.f, player.GetVelocity().y }); //Move left (sprint)
+				playerAnim.SwitchCurrent("run"); //Switch to run animation when sprinting
+			}
+			else
+			{
+				player.SetVelocity({ -2.5f, player.GetVelocity().y }); //Move left
+				playerAnim.SwitchCurrent("walk"); //Switch to walk animation when moving left
+			}
+		}
+		else
+		{
+			player.SetVelocity({ -2.5f, player.GetVelocity().y }); //Allow horizontal control in the air
+		}
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
 		player.setScale({ 3.f, 3.f }); //Normal scale when moving right
-		player.SetVelocity({ 2.f, player.GetVelocity().y }); //Move right
-
-		if(playerGrounded)
-			playerAnim.SwitchCurrent("walk"); //Switch to walk animation
+		
+		if (playerGrounded)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::Key::LShift))
+			{
+				player.SetVelocity({ 5.f, player.GetVelocity().y }); //Move left (sprint)
+				playerAnim.SwitchCurrent("run"); //Switch to run animation when sprinting
+			}
+			else
+			{
+				player.SetVelocity({ 2.5f, player.GetVelocity().y }); //Move left
+				playerAnim.SwitchCurrent("walk"); //Switch to walk animation when moving left
+			}
+		}
+		else
+		{
+			player.SetVelocity({ 2.5f, player.GetVelocity().y }); //Allow horizontal control in the air
+		}
 	}
 	else if (!Keyboard::isKeyPressed(Keyboard::Key::A) && !Keyboard::isKeyPressed(Keyboard::Key::D) && !Keyboard::isKeyPressed(Keyboard::Key::Space))
 	{
@@ -152,7 +188,7 @@ void PlatformerState::Update()
 
 void PlatformerState::Render(RenderWindow& window)
 {
-	window.clear();
+	window.clear(Color(20, 152, 220)); //YOU CAN CHANGE BACKGROUND COLOR LIKE THIS (This matches the sky tiles I'm using)
 	window.draw(tilemap);
 	window.draw(player);
 	window.setView(camera);

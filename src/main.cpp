@@ -7,7 +7,7 @@
 
 int main()
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Pong");
+    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML");
     window.setFramerateLimit(144);
 
     //Initialize State manager

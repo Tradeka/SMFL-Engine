@@ -25,6 +25,7 @@ private:
 	Texture playerIdle;
 	Texture playerWalk;
 	Texture playerJump;
+	Texture playerRun;
 
 	//Tilemap
 	Texture tilemapSheet;
