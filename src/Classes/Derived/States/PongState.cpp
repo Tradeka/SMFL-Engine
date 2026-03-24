@@ -24,25 +24,25 @@ PongState::PongState()
 {
     //Ball setup
     ball.setPosition({ 960.f, 540.f });
-    ball.scale({ 0.4f, 0.4f });
+    ball.setScale({ 0.4f, 0.4f });
 
     //Paddle 1 setup
-    paddle1.scale({ 1.f, 1.8f });
+    paddle1.setScale({ 1.f, 1.8f });
     paddle1.setPosition({ paddle1.GetGlobalBounds().size.x / 2.f, 540.f });
 
     //Paddle 2 setup
-    paddle2.scale({ 1.f, 1.8f });
+    paddle2.setScale({ 1.f, 1.8f });
     paddle2.setPosition({ 1920.f - paddle2.GetGlobalBounds().size.x / 2.f, 540.f });
 
     //Gate setup
     gate.setPosition({ 960.f - gate.GetGlobalBounds().size.x / 2.f, 540.f - gate.GetGlobalBounds().size.y / 2.f - 25.f });
-    gate.scale({ 0.75f, 1.f });
+    gate.setScale({ 0.75f, 1.f });
 
     gate2.setPosition({ 960.f - gate2.GetGlobalBounds().size.x / 2.f, 540.f - 25.f });
     gate2.setScale({ 0.75f, 1.f });
 
     gate3.setPosition({ 960.f - gate3.GetGlobalBounds().size.x / 2.f, 1080.f - gate3.GetGlobalBounds().size.y / 3.f - 25.f });
-    gate3.scale({ 0.75f, 1.f });
+    gate3.setScale({ 0.75f, 1.f });
 
     //Font and text setup
     if (!gameFont.openFromFile("Assets/Fonts/ByteBounce.ttf"))
@@ -164,18 +164,18 @@ void PongState::HandlePaddleBounce(GameObject& ball, GameObject& paddle, bool is
     Vector2f velocity = ball.GetVelocity();
     float speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
 
-    velocity.x = std::abs(velocity.x);
-    velocity.x = isLeftPaddle ? velocity.x : -velocity.x;
-    velocity.y = normalized * speed;
-
-    ball.SetVelocity(velocity);
-
     //Reposition ball outside paddle
     float newX = isLeftPaddle
-        ? paddle.getPosition().x + paddleHalfWidth + ballHalfWidth
-        : paddle.getPosition().x - paddleHalfWidth - ballHalfWidth;
+        ? paddle.getPosition().x + paddleHalfWidth + ballHalfWidth + 1
+        : paddle.getPosition().x - paddleHalfWidth - ballHalfWidth - 1;
 
     ball.setPosition({ newX, ball.getPosition().y });
+
+    velocity.x = isLeftPaddle ? speed : -speed;
+    velocity.y = normalized * speed;
+
+
+    ball.SetVelocity(velocity);
 }
 
 void PongState::CheckCollisions(const Vector2u& windowSize) //Function for handling any collisions in game
@@ -224,11 +224,11 @@ void PongState::CheckCollisions(const Vector2u& windowSize) //Function for handl
     paddle2.setPosition(pos2);
 
     //Ball-paddle collision
-    if (ball.Intersects(paddle1))
+    if (ball.Intersects(paddle1) && ball.GetVelocity().x < 0)
     {
         HandlePaddleBounce(ball, paddle1, true);
     }
-    else if (ball.Intersects(paddle2))
+    else if (ball.Intersects(paddle2) && ball.GetVelocity().x > 0)
     {
         HandlePaddleBounce(ball, paddle2, false);
     }

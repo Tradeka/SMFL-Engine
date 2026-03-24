@@ -160,7 +160,7 @@ void PlatformerState::Update()
 		ApplyGravity(player, 0.2f); //Apply gravity to the player
 	}
 
-	if(tilemap.CheckTileMapCollision(player)) //Check for collisions with the tilemap
+	if(tilemap.CheckTileMapCollision(player) && player.GetVelocity().y > 0) //Check for collisions with the tilemap
 	{
 		Vector2f playerPos = player.getPosition();
 		Vector2f playerSize = player.GetGlobalBounds().size; 

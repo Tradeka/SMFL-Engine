@@ -23,22 +23,30 @@ void GameObject::draw(RenderTarget& target, RenderStates states) const
         }
         return;
     }
-    target.draw(sprite);
+    else
+    {
+		states.transform *= getTransform(); //Apply GameObject transform to render states
+        auto sprite = this->sprite; //Make a copy of the sprite to modify its transform without affecting the original
+        SyncSpriteTransform(sprite);
+        target.draw(sprite);
+    }
+   
 }
 
 
 sf::FloatRect GameObject::GetGlobalBounds() const
 {
+    const Sprite* s = &sprite;
+
     if (animator)
     {
-        if (sf::Sprite* animSprite = animator->GetCurrentSprite())
-        {
-            return animSprite->getGlobalBounds();
-        }
+        if (Sprite* animSprite = animator->GetCurrentSprite())
+            s = animSprite;
     }
 
-    return sprite.getGlobalBounds();
+    return getTransform().transformRect(s->getLocalBounds());
 }
+
 
 bool GameObject::Intersects(const GameObject& other) const //Clean AABB collision detection using SFML's built-in function
 {
