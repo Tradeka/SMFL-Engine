@@ -7,7 +7,7 @@ GameObject::GameObject(const Texture& texture)
 {
 	SetSprite(texture);
     const auto bounds = sprite.getLocalBounds();
-    sprite.setOrigin(bounds.size / 2.f);
+    sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
 }
 
 //Utility
@@ -36,15 +36,21 @@ void GameObject::draw(RenderTarget& target, RenderStates states) const
 
 sf::FloatRect GameObject::GetGlobalBounds() const
 {
-    const Sprite* s = &sprite;
+    const sf::Sprite* s = &sprite;
 
     if (animator)
     {
-        if (Sprite* animSprite = animator->GetCurrentSprite())
+        if (sf::Sprite* animSprite = animator->GetCurrentSprite())
             s = animSprite;
     }
 
-    return getTransform().transformRect(s->getLocalBounds());
+    sf::FloatRect local = s->getLocalBounds();
+    sf::Vector2f origin = s->getOrigin();
+
+    // Adjust position instead of left/top
+    local.position -= origin;
+
+    return getTransform().transformRect(local);
 }
 
 

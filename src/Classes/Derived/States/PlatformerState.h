@@ -26,6 +26,7 @@ private:
 	Texture playerWalk;
 	Texture playerJump;
 	Texture playerRun;
+	Clock gameClock; //In case time is needed for anything in game
 
 	//Tilemap
 	Texture tilemapSheet;

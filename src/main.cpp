@@ -16,8 +16,8 @@ int main()
     /*GAMES*/
 
     //PONG
-    /*auto menuState = std::make_unique<PongMenuState>(stateManager);
-    stateManager.PushState(std::move(menuState));*/
+    //auto menuState = std::make_unique<PongMenuState>(stateManager);
+    //stateManager.PushState(std::move(menuState));
 
 	//PLATFORMER
 	auto platformerState = std::make_unique<PlatformerState>();

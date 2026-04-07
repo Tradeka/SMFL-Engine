@@ -94,62 +94,121 @@ void PlatformerState::HandleInput(RenderWindow& window)
 		}
 	}
 
+	float moveInput = 0.f;
+	float dashDirInput = 0.f;
+
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
+		moveInput -= 1.f;
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::D))
+		moveInput += 1.f;
+
+	if(Keyboard::isKeyPressed(Keyboard::Key::W))
+		dashDirInput -= 1.f;
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::S))
+		dashDirInput += 1.f;
+
+	bool isSprinting = Keyboard::isKeyPressed(Keyboard::Key::LShift);
+
+	//Speeds
+	float walkSpeed = 3.f;
+	float sprintSpeed = 5.f;
+
+	//Choose speed
+	float speed = isSprinting ? sprintSpeed : walkSpeed;
+
+	//Apply movement
+	if (moveInput != 0.f)
 	{
-		player.setScale({ -3.f, 3.f }); //Flip sprite when moving left
+		player.setScale({ moveInput < 0 ? -3.f : 3.f, 3.f });
 
 		if (playerGrounded)
 		{
-			if (Keyboard::isKeyPressed(Keyboard::Key::LShift))
-			{
-				player.SetVelocity({ -5.f, player.GetVelocity().y }); //Move left (sprint)
-				playerAnim.SwitchCurrent("run"); //Switch to run animation when sprinting
-			}
+			//Ground acceleration
+			float velX = player.GetVelocity().x;
+			float groundAcceleration = 0.5f;
+
+			velX += moveInput * groundAcceleration;
+			float maxGroundSpeed = speed;
+			velX = std::clamp(velX, -maxGroundSpeed, maxGroundSpeed);
+
+			player.SetVelocity({ velX, player.GetVelocity().y });
+
+			if (isSprinting)
+				playerAnim.SwitchCurrent("run");
 			else
-			{
-				player.SetVelocity({ -2.5f, player.GetVelocity().y }); //Move left
-				playerAnim.SwitchCurrent("walk"); //Switch to walk animation when moving left
-			}
+				playerAnim.SwitchCurrent("walk");
 		}
 		else
 		{
-			player.SetVelocity({ -2.5f, player.GetVelocity().y }); //Allow horizontal control in the air
+			//Air acceleration
+			float velX = player.GetVelocity().x;
+			float airAcceleration = 0.2f;
+
+			velX += moveInput * airAcceleration;
+
+			float maxAirSpeed = speed;
+			velX = std::clamp(velX, -maxAirSpeed, maxAirSpeed);
+
+			player.SetVelocity({ velX, player.GetVelocity().y });
 		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Key::D))
+	else
 	{
-		player.setScale({ 3.f, 3.f }); //Normal scale when moving right
-		
 		if (playerGrounded)
 		{
-			if (Keyboard::isKeyPressed(Keyboard::Key::LShift))
+			if (moveInput == 0.f) //Decelerate player to a stop when no input is given
 			{
-				player.SetVelocity({ 5.f, player.GetVelocity().y }); //Move left (sprint)
-				playerAnim.SwitchCurrent("run"); //Switch to run animation when sprinting
-			}
-			else
-			{
-				player.SetVelocity({ 2.5f, player.GetVelocity().y }); //Move left
-				playerAnim.SwitchCurrent("walk"); //Switch to walk animation when moving left
+				float decel = 0.25f;
+
+				if(player.GetVelocity().x > 0.f)
+				{
+					decel = std::min(decel, player.GetVelocity().x);
+				}
+				else if(player.GetVelocity().x < 0.f)
+				{
+					decel = std::max(-decel, player.GetVelocity().x);
+				}
+				else
+				{
+					decel = 0.f;
+				}
+				float velX = player.GetVelocity().x - decel;
+				player.SetVelocity({ velX, player.GetVelocity().y });
+				playerAnim.SwitchCurrent("idle");
 			}
 		}
-		else
-		{
-			player.SetVelocity({ 2.5f, player.GetVelocity().y }); //Allow horizontal control in the air
-		}
-	}
-	else if (!Keyboard::isKeyPressed(Keyboard::Key::A) && !Keyboard::isKeyPressed(Keyboard::Key::D) && !Keyboard::isKeyPressed(Keyboard::Key::Space))
-	{
-		player.SetVelocity({ 0.f, player.GetVelocity().y }); //Stop horizontal movement when no left/right input
-		if (playerGrounded)
-			playerAnim.SwitchCurrent("idle"); //Switch to idle animation when not moving left or right
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && playerGrounded)
+	//JUMP
+	bool jumpBuffered = false;
+
+	if(Keyboard::isKeyPressed(Keyboard::Key::Space) && !playerGrounded)
 	{
-		playerAnim.SwitchCurrent("jump"); //Switch to jump animation
-		player.SetVelocity({ player.GetVelocity().x, player.GetVelocity().y - 10.f }); //Apply an instant upward velocity for jumping)
-		playerGrounded = false; //Set grounded to false when jumping, will be set to true again when colliding with tilemap
+		jumpBuffered = true; //If space is pressed in-air, buffer jump input
+	}
+
+	if (playerGrounded)
+	{
+		if (jumpBuffered || Keyboard::isKeyPressed(Keyboard::Key::Space)) //Jump if space is pressed or if jump was buffered while in-air
+		{
+			jumpBuffered = false; //reset jump buffer
+			playerAnim.SwitchCurrent("jump"); //Switch to jump animation
+			player.SetVelocity({ player.GetVelocity().x, player.GetVelocity().y - 10.f }); //Apply an instant upward velocity for jumping)
+			playerGrounded = false; //Set grounded to false when jumping, will be set to true again when colliding with tilemap
+		}
+	}
+	
+	//DASH
+	bool canDash = true; 
+	float dashSpeed = 7.f;
+	Vector2i dashDirection = { static_cast<int>(moveInput), static_cast<int>(dashDirInput)};
+
+	if(Keyboard::isKeyPressed(Keyboard::Key::C) && canDash && !playerGrounded)
+	{
+		canDash = false; //Set canDash to false to prevent multiple dashes
+		player.SetVelocity({ dashDirection.x * dashSpeed, dashDirection.y * dashSpeed }); //Set velocity in the direction of input for dashing
 	}
 }
 
@@ -157,23 +216,30 @@ void PlatformerState::Update()
 {
 	if (!playerGrounded)
 	{
-		ApplyGravity(player, 0.2f); //Apply gravity to the player
+		ApplyGravity(player, 0.19f); //Apply gravity to the player
 	}
 
 	if(tilemap.CheckTileMapCollision(player) && player.GetVelocity().y > 0) //Check for collisions with the tilemap
 	{
-		Vector2f playerPos = player.getPosition();
-		Vector2f playerSize = player.GetGlobalBounds().size; 
+		Vector2f playerSize = player.GetGlobalBounds().size;
 
-		Vector2i tileSize = tilemap.GetTileSize(); 
-		Vector2f mapScale = tilemap.getScale();    
+		Vector2i tileSize = tilemap.GetTileSize();
+		Vector2f mapScale = tilemap.getScale();
 
-		//Compute the tile the player's bottom center is over
-		int tileX = static_cast<int>((playerPos.x + playerSize.x / 2.f) / (tileSize.x * mapScale.x));
-		int tileY = static_cast<int>((playerPos.y + playerSize.y) / (tileSize.y * mapScale.y));
+		float halfHeight = playerSize.y / 2.f;
+
+		// Bottom of player (since position is center now)
+		float playerBottom = player.getPosition().y + halfHeight;
+
+		// Compute tile under player's bottom center
+		int tileX = static_cast<int>(player.getPosition().x / (tileSize.x * mapScale.x));
+		int tileY = static_cast<int>(playerBottom / (tileSize.y * mapScale.y));
 
 		float tileTop = tileY * tileSize.y * mapScale.y;
-		player.setPosition({ playerPos.x, tileTop - playerSize.y });
+
+		// Snap so bottom of player sits on tile
+		player.setPosition({ player.getPosition().x, tileTop - halfHeight});
+
 		player.SetVelocity({ player.GetVelocity().x, 0.f });
 		playerGrounded = true;
 	}

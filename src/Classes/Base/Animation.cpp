@@ -12,6 +12,8 @@ Animation::Animation(const Texture& spriteSheet, Vector2i spriteSize, unsigned i
 	currentFrame = IntRect({ 0,0 }, {spriteSize.x, spriteSize.y});
 	currentFrameIndex = 0;
 	displayedSprite = Sprite(spriteSheet, currentFrame);
+	const auto bounds = displayedSprite.getLocalBounds();
+	displayedSprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
 }
 
 void Animation::Play()
