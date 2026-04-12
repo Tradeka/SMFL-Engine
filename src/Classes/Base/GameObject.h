@@ -22,7 +22,13 @@ public:
 
 	FloatRect GetGlobalBounds() const;
 
+	void SetGlobalBounds(const FloatRect& newBounds);
+
 	bool Intersects(const GameObject& other) const;
+
+	float GetAngleTo(const GameObject& other) const; //Get the angle from this GameObject to another GameObject in degrees, where 0 is to the right and positive angles are counterclockwise
+
+	float GetDistanceTo(const GameObject& other) const; //Get the distance from this GameObject to another GameObject
 
 	void DrawDebugBounds(RenderTarget& target) const;
 

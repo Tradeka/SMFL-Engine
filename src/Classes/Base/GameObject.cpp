@@ -1,5 +1,6 @@
 #include "SFML/Graphics.hpp"
 #include "Classes/Base/GameObject.h"
+#include <iostream>
 
 //Constructor/Destructor
 GameObject::GameObject(const Texture& texture)
@@ -53,6 +54,15 @@ sf::FloatRect GameObject::GetGlobalBounds() const
     return getTransform().transformRect(local);
 }
 
+void GameObject::SetGlobalBounds(const FloatRect& newBounds)
+{
+    FloatRect currentBounds = GetGlobalBounds();
+    float scaleX = newBounds.size.x;
+    float scaleY = newBounds.size.y;
+    setScale({ scaleX, scaleY });
+    setPosition(newBounds.position + newBounds.size / 2.f); // Center the object on the new bounds
+}
+
 
 bool GameObject::Intersects(const GameObject& other) const //Clean AABB collision detection using SFML's built-in function
 {
@@ -78,6 +88,18 @@ void GameObject::SyncSpriteTransform(Sprite& sprite) const
     sprite.setPosition(getPosition());
     sprite.setScale(getScale());
     sprite.setRotation(getRotation());
+}
+
+float GameObject::GetAngleTo(const GameObject& other) const
+{
+    Vector2f direction = other.getPosition() - getPosition();
+    return atan2(direction.y, direction.x) * 180.f / 3.14159265f; //Convert to degrees
+}
+
+float GameObject::GetDistanceTo(const GameObject& other) const
+{
+    Vector2f direction = other.getPosition() - getPosition();
+    return sqrt(direction.x * direction.x + direction.y * direction.y);
 }
 
 //Setters/Getters

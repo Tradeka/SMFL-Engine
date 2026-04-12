@@ -21,6 +21,7 @@ public:
 	void SetDesignVector(const std::vector<std::vector<int>>& design);
 	void SetCollisionVector(const std::vector<std::vector<int>>& collision);
 	bool CheckTileMapCollision(GameObject& obj);
+	bool CheckTileMapOverlap(Vector2f point);
 	Vector2i GetTileSize() const { return tileSize; }
 
 private:

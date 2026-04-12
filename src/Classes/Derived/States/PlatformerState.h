@@ -3,6 +3,7 @@
 #include "Classes/Base/Tilemap.h"
 #include "Classes/Base/GameObject.h"
 #include "Classes/Base/Animator.h"
+#include <vector>
 
 class PlatformerState : public GameState
 {
@@ -34,6 +35,11 @@ private:
 
 	//Other
 	bool playerGrounded = false; //Variable to track if the player is on the ground, allowing them to jump again after jumping
+	Texture yoyoTexture;
+
+	std::vector<std::shared_ptr<GameObject>> tempObjects;
+	std::shared_ptr<GameObject> currentYoyo;
+	Time yoyoFiredTime = Time::Zero;
 
 	//Camera
 	View camera;

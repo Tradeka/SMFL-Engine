@@ -107,3 +107,29 @@ bool Tilemap::CheckTileMapCollision(GameObject& obj)
 
     return false;
 }
+
+bool Tilemap::CheckTileMapOverlap(Vector2f point)
+{
+    sf::Vector2f mapPos = getPosition();
+    sf::Vector2f mapScale = getScale();
+    for (int y = 0; y < mapSize.y; y++)
+    {
+        for (int x = 0; x < mapSize.x; x++)
+        {
+            if (collisionVector[y][x] != 1)
+                continue;
+            sf::Vector2f tilePos(
+                mapPos.x + x * tileSize.x * mapScale.x,
+                mapPos.y + y * tileSize.y * mapScale.y
+            );
+            sf::Vector2f tileSizeScaled(
+                tileSize.x * mapScale.x,
+                tileSize.y * mapScale.y
+            );
+            sf::FloatRect tileRect(tilePos, tileSizeScaled);
+            if (tileRect.contains(point))
+                return true;
+        }
+    }
+    return false;
+}

@@ -1,11 +1,16 @@
 #include "Classes/Derived/States/PlatformerState.h"
 #include <iostream>
 
+//Global Variables (if any)
+bool isDashing = false;
+bool yoyoReturning = false;
+
 PlatformerState::PlatformerState() :
 	playerIdle("Assets/SpriteSheets/player_idle.png"),
 	player(playerIdle),
 	tilemapSheet("Assets/SpriteSheets/world_tileset.png"),
-	tilemap(tilemapSheet, Vector2i(16, 16), Vector2i(40, 12))
+	tilemap(tilemapSheet, Vector2i(16, 16), Vector2i(40, 12)),
+	yoyoTexture("Assets/Textures/Ball.png")
 {
 	if(tilemapSheet.loadFromFile("Assets/SpriteSheets/world_tileset.png"))
 	{
@@ -76,12 +81,19 @@ PlatformerState::PlatformerState() :
 		playerAnim.AddAnimation(*runAnim, "run");
 	}
 
+	if (yoyoTexture.loadFromFile("Assets/Textures/Ball.png"))
+	{
+		// Yoyo texture loaded successfully
+	}
+
 	player.setPosition({ 100.f, 100.f });
 	player.setScale({ 3.f, 3.f });
 
 	tilemap.setScale({ 6.f, 6.f });
 
 	camera.setSize({ 1920.f, 1080.f });
+
+	gameClock.start();
 }
 
 void PlatformerState::HandleInput(RenderWindow& window)
@@ -109,7 +121,17 @@ void PlatformerState::HandleInput(RenderWindow& window)
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 		dashDirInput += 1.f;
 
-	bool isSprinting = Keyboard::isKeyPressed(Keyboard::Key::LShift);
+	bool isSprinting = false;
+
+	if (playerGrounded)
+	{
+		isSprinting = Keyboard::isKeyPressed(Keyboard::Key::LShift);
+	}
+	else
+	{
+		isSprinting = false; //No sprinting in-air, but you could allow it if you want
+	}
+	
 
 	//Speeds
 	float walkSpeed = 3.f;
@@ -127,7 +149,7 @@ void PlatformerState::HandleInput(RenderWindow& window)
 		{
 			//Ground acceleration
 			float velX = player.GetVelocity().x;
-			float groundAcceleration = 0.5f;
+			float groundAcceleration = 0.3f;
 
 			velX += moveInput * groundAcceleration;
 			float maxGroundSpeed = speed;
@@ -140,16 +162,13 @@ void PlatformerState::HandleInput(RenderWindow& window)
 			else
 				playerAnim.SwitchCurrent("walk");
 		}
-		else
+		else if(!playerGrounded)
 		{
 			//Air acceleration
 			float velX = player.GetVelocity().x;
-			float airAcceleration = 0.2f;
+			float airAcceleration = 0.03f;
 
-			velX += moveInput * airAcceleration;
-
-			float maxAirSpeed = speed;
-			velX = std::clamp(velX, -maxAirSpeed, maxAirSpeed);
+			velX += moveInput * airAcceleration; //Apply air acceleration, with a small deceleration to prevent infinite air acceleration when holding a direction
 
 			player.SetVelocity({ velX, player.GetVelocity().y });
 		}
@@ -160,7 +179,7 @@ void PlatformerState::HandleInput(RenderWindow& window)
 		{
 			if (moveInput == 0.f) //Decelerate player to a stop when no input is given
 			{
-				float decel = 0.25f;
+				float decel = 0.2f;
 
 				if(player.GetVelocity().x > 0.f)
 				{
@@ -180,11 +199,51 @@ void PlatformerState::HandleInput(RenderWindow& window)
 			}
 		}
 	}
+	
+	//DASH
+	static Time lastFireTime = Time::Zero;
+	static bool dashKeyWasPressed = false;
+	float dashSpeed = 5.5f;
+	float dashTime = 0.1f; //Duration of the dash in seconds
+
+	Time currentTime = gameClock.getElapsedTime();
+
+	bool canDash = (currentTime - lastFireTime).asSeconds() >= dashTime && !playerGrounded;
+
+	bool dashKeyPressed = Keyboard::isKeyPressed(Keyboard::Key::C);
+	bool dashJustPressed = dashKeyPressed && !dashKeyWasPressed;
+
+	Vector2i dashDirection = { (int)moveInput, (int)dashDirInput };
+
+	if (dashJustPressed && canDash)
+	{
+		isDashing = true;
+		if(dashDirection == Vector2i{0,0}) //If no direction is pressed, dash in the direction the player is facing
+		{
+			dashDirection.x = player.getScale().x > 0 ? 1 : -1; //Dash right if facing right, left if facing left
+		}
+		else if (dashDirection.x != 0 && dashDirection.y == 0)
+		{
+			dashSpeed *= 1.3; //Increase speed for horizontal dashes
+		}
+		
+		player.SetVelocity({ dashDirection.x * dashSpeed, dashDirection.y * dashSpeed });
+		lastFireTime = currentTime;
+		
+	}
+
+	if((currentTime - lastFireTime).asSeconds() >= dashTime) //End dash (this is tracked so gravity can be turned off during the dash)
+	{
+		isDashing = false;
+	}
+
+	dashKeyWasPressed = dashKeyPressed;
 
 	//JUMP
 	bool jumpBuffered = false;
+	float jumpBufferTime = 10.f; //Time window to allow buffered jumps in seconds
 
-	if(Keyboard::isKeyPressed(Keyboard::Key::Space) && !playerGrounded)
+	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && !playerGrounded)
 	{
 		jumpBuffered = true; //If space is pressed in-air, buffer jump input
 	}
@@ -196,30 +255,80 @@ void PlatformerState::HandleInput(RenderWindow& window)
 			jumpBuffered = false; //reset jump buffer
 			playerAnim.SwitchCurrent("jump"); //Switch to jump animation
 			player.SetVelocity({ player.GetVelocity().x, player.GetVelocity().y - 10.f }); //Apply an instant upward velocity for jumping)
-			playerGrounded = false; //Set grounded to false when jumping, will be set to true again when colliding with tilemap
 		}
 	}
-	
-	//DASH
-	bool canDash = true; 
-	float dashSpeed = 7.f;
-	Vector2i dashDirection = { static_cast<int>(moveInput), static_cast<int>(dashDirInput)};
 
-	if(Keyboard::isKeyPressed(Keyboard::Key::C) && canDash && !playerGrounded)
+	//YOYO THROW (YO)
+	static bool fKeyWasPressed = false;
+	bool fKeyPressed = Keyboard::isKeyPressed(Keyboard::Key::F);
+	bool fJustPressed = fKeyPressed && !fKeyWasPressed;
+	
+	if (fJustPressed && currentYoyo == nullptr)
 	{
-		canDash = false; //Set canDash to false to prevent multiple dashes
-		player.SetVelocity({ dashDirection.x * dashSpeed, dashDirection.y * dashSpeed }); //Set velocity in the direction of input for dashing
+		auto yoyo = std::make_shared<GameObject>(yoyoTexture);
+
+		yoyo->setPosition(player.getPosition());
+		yoyo->setScale({ 0.25f, 0.25f });
+
+		Vector2f vel = { player.getScale().x * 1.5f, 0.f };
+		yoyo->SetVelocity(vel);
+
+		tempObjects.push_back(yoyo);
+		currentYoyo = yoyo;
+
+		yoyoFiredTime = currentTime;
+	}
+	fKeyWasPressed = fKeyPressed;
+
+	if (currentYoyo && (currentTime - yoyoFiredTime).asSeconds() >= 0.5f)
+	{
+		if (fKeyPressed)
+		{
+			currentYoyo->SetVelocity({ 0,0 }); //Stop yoyo movement while holding the key
+		}
+		else
+		{
+			yoyoReturning = true;
+			Vector2f returnDir = player.getPosition() - currentYoyo->getPosition();
+			float length = std::sqrt(returnDir.x * returnDir.x + returnDir.y * returnDir.y);
+			if (length != 0)
+			{
+				returnDir /= length; //Normalize the return direction
+				currentYoyo->SetVelocity(returnDir * 3.f); //Set velocity towards the player
+			}
+		}
+	}
+
+	if(yoyoReturning && currentYoyo->GetDistanceTo(player) < 10.f) //If the yoyo is close enough to the player, remove it
+	{
+		tempObjects.erase(
+			std::remove(tempObjects.begin(), tempObjects.end(), currentYoyo),
+			tempObjects.end()
+		);
+
+		currentYoyo = nullptr;
+		yoyoReturning = false;
 	}
 }
 
 void PlatformerState::Update()
 {
-	if (!playerGrounded)
-	{
-		ApplyGravity(player, 0.19f); //Apply gravity to the player
-	}
+	if(!isDashing)
+		ApplyGravity(player, 0.155f); //Apply gravity to the player
 
-	if(tilemap.CheckTileMapCollision(player) && player.GetVelocity().y > 0) //Check for collisions with the tilemap
+	Vector2f playerSize = player.GetGlobalBounds().size;
+	float halfHeight = playerSize.y / 2.f;
+
+	Vector2f belowPlayerPos = {
+		player.getPosition().x,
+		player.getPosition().y + halfHeight + 1.f //small buffer
+	};
+	
+
+	bool isColliding = tilemap.CheckTileMapCollision(player);
+	bool isAboveTile = tilemap.CheckTileMapOverlap(belowPlayerPos);
+
+	if (isColliding && isAboveTile)
 	{
 		Vector2f playerSize = player.GetGlobalBounds().size;
 
@@ -228,28 +337,38 @@ void PlatformerState::Update()
 
 		float halfHeight = playerSize.y / 2.f;
 
-		// Bottom of player (since position is center now)
 		float playerBottom = player.getPosition().y + halfHeight;
 
-		// Compute tile under player's bottom center
 		int tileX = static_cast<int>(player.getPosition().x / (tileSize.x * mapScale.x));
 		int tileY = static_cast<int>(playerBottom / (tileSize.y * mapScale.y));
 
 		float tileTop = tileY * tileSize.y * mapScale.y;
 
-		// Snap so bottom of player sits on tile
-		player.setPosition({ player.getPosition().x, tileTop - halfHeight});
-
-		player.SetVelocity({ player.GetVelocity().x, 0.f });
+		if (player.GetVelocity().y >= 0)
+		{
+			player.setPosition({ player.getPosition().x, tileTop - halfHeight });
+			player.SetVelocity({ player.GetVelocity().x, 0.f });
+		}
+	}
+	
+	//Ground check cast
+	if (tilemap.CheckTileMapOverlap(belowPlayerPos) && player.GetVelocity().y >= 0)
+	{
 		playerGrounded = true;
 	}
 	else
 	{
-		playerGrounded = false; //Set grounded to false if not colliding with tilemap
+		playerGrounded = false;
 	}
+
 
 	camera.setCenter(player.getPosition()); //Set camera to follow player
 	player.move(player.GetVelocity()); //Move player based on velocity
+
+	for (auto& obj : tempObjects)
+	{
+		obj->move(obj->GetVelocity());
+	}
 }
 
 void PlatformerState::Render(RenderWindow& window)
@@ -257,6 +376,10 @@ void PlatformerState::Render(RenderWindow& window)
 	window.clear(Color(20, 152, 220)); //YOU CAN CHANGE BACKGROUND COLOR LIKE THIS (This matches the sky tiles I'm using)
 	window.draw(tilemap);
 	window.draw(player);
+	for (auto& obj : tempObjects)
+	{
+		window.draw(*obj);
+	}
 	window.setView(camera);
 	window.display();
 }
